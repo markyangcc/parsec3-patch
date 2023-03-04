@@ -17,5 +17,7 @@ for file in parsec3-patch/*.patch; do patch -p1 < "$file"; done
 
 Build parsec benchmark suite
 ```shell
+source env.sh
 parsecmgmt -a build
 ```
+
