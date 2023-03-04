@@ -1,0 +1,84 @@
+From d82b8e84cfe2e9237df671c7d7ef205b8628dcd9 Mon Sep 17 00:00:00 2001
+From: guangsheng1 <guangsheng1@staff.sina.com>
+Date: Sat, 4 Mar 2023 03:38:31 +0000
+Subject: [PATCH 7/7] fix: multiple definition when build with gcc 10 or above
+
+gcc 10 or above default to enable -fno-common option
+
+Ref: https://gcc.gnu.org/gcc-10/porting_to.html
+---
+ ext/splash2/apps/raytrace/src/makefile    | 2 +-
+ ext/splash2/apps/volrend/src/makefile     | 2 +-
+ ext/splash2x/apps/raytrace/src/Makefile   | 2 +-
+ pkgs/kernels/dedup/src/Makefile           | 2 +-
+ pkgs/netapps/netdedup/src/server/Makefile | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/ext/splash2/apps/raytrace/src/makefile b/ext/splash2/apps/raytrace/src/makefile
+index 63f9c15e..c3ef1844 100644
+--- a/ext/splash2/apps/raytrace/src/makefile
++++ b/ext/splash2/apps/raytrace/src/makefile
+@@ -5,7 +5,7 @@ OBJS = bbox.o cr.o env.o fbuf.o geo.o huprn.o husetup.o hutv.o isect.o \
+ 	tri.o workpool.o
+ LDFLAGS = -lpthread -lm
+ MACROS = ../../../null_macros/c.m4.null.pthread
+-CFLAGS =  -O2 -w 
++CFLAGS =  -O2 -w -fcommon
+ 
+ x = *
+ 
+diff --git a/ext/splash2/apps/volrend/src/makefile b/ext/splash2/apps/volrend/src/makefile
+index acbf52e0..9521046a 100644
+--- a/ext/splash2/apps/volrend/src/makefile
++++ b/ext/splash2/apps/volrend/src/makefile
+@@ -1,7 +1,7 @@
+ TARGET = volrend
+ OBJS = main.o file.o option.o map.o normal.o opacity.o octree.o view.o \
+        render.o adaptive.o raytrace.o
+-CFLAGS = -O2 -w -DPRESHD $(CDEBUG) -Ilibtiff
++CFLAGS = -O2 -w -DPRESHD $(CDEBUG) -Ilibtiff -fcommon
+ CCOPTS = -S -I -I$(SIMDIR) -I$(IDIR) -I/usr/include -DAUG $(CFLAGS)
+ LDFLAGS = -O2 -w -pthread -lm -Ilibtiff -Llibtiff -ltiff
+ MACROS = ../../../null_macros/c.m4.null.pthread
+diff --git a/ext/splash2x/apps/raytrace/src/Makefile b/ext/splash2x/apps/raytrace/src/Makefile
+index 3e7f158a..d5e05bd9 100644
+--- a/ext/splash2x/apps/raytrace/src/Makefile
++++ b/ext/splash2x/apps/raytrace/src/Makefile
+@@ -2,7 +2,7 @@ TARGET = raytrace
+ OBJS = bbox.o cr.o env.o fbuf.o geo.o huprn.o husetup.o hutv.o isect.o main.o matrix.o memory.o poly.o raystack.o shade.o sph.o trace.o tri.o workpool.o
+ 
+ CFLAGS := $(CFLAGS) -Wall -W -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wdisabled-optimization
+-CFLAGS := $(CFLAGS) -Wpadded -Winline -Wpointer-arith -Wsign-compare -Wendif-labels
++CFLAGS := $(CFLAGS) -Wpadded -Winline -Wpointer-arith -Wsign-compare -Wendif-labels -fcommon
+ LDFLAGS := $(LDFLAGS) -lm 
+ 
+ PREFIX=${PARSECDIR}/ext/splash2x/apps/raytrace/inst/${PARSECPLAT}
+diff --git a/pkgs/kernels/dedup/src/Makefile b/pkgs/kernels/dedup/src/Makefile
+index 37bac70a..a30910da 100644
+--- a/pkgs/kernels/dedup/src/Makefile
++++ b/pkgs/kernels/dedup/src/Makefile
+@@ -4,7 +4,7 @@ PREFIX=${PARSECDIR}/pkgs/kernels/dedup/inst/${PARSECPLAT}
+ 
+ TARGET=dedup
+ 
+-CFLAGS += -Wall -fno-strict-aliasing -D_XOPEN_SOURCE=600
++CFLAGS += -Wall -fno-strict-aliasing -fcommon -D_XOPEN_SOURCE=600
+ 
+ ostype=$(findstring solaris, ${PARSECPLAT})
+ 
+diff --git a/pkgs/netapps/netdedup/src/server/Makefile b/pkgs/netapps/netdedup/src/server/Makefile
+index 96b17569..0bb6c8e0 100644
+--- a/pkgs/netapps/netdedup/src/server/Makefile
++++ b/pkgs/netapps/netdedup/src/server/Makefile
+@@ -5,7 +5,7 @@ PREFIX=${PARSECDIR}/pkgs/netapps/netdedup/inst/${PARSECPLAT}
+ TARGET=netdedup
+ TARGET_SIM=netdedup_sim
+ 
+-CFLAGS += -Wall -fno-strict-aliasing -D_XOPEN_SOURCE=600
++CFLAGS += -Wall -fno-strict-aliasing -fcommon -D_XOPEN_SOURCE=600
+ 
+ ostype=$(findstring solaris, ${PARSECPLAT})
+ 
+-- 
+2.31.1
+

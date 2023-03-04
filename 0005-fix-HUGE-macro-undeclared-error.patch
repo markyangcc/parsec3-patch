@@ -1,0 +1,65 @@
+From c315b4ae93e8b2eaa62dc073ad6b2c1e05c546a4 Mon Sep 17 00:00:00 2001
+From: guangsheng1 <guangsheng1@staff.sina.com>
+Date: Fri, 3 Mar 2023 09:03:53 +0000
+Subject: [PATCH 5/7] fix: HUGE macro undeclared error
+
+---
+ pkgs/apps/ferret/src/benchmark/ferret-pthreads.c              | 1 +
+ pkgs/apps/ferret/src/src/lsh/LSH.h                            | 2 ++
+ pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c | 1 +
+ pkgs/netapps/netferret/src/server/src/lsh/LSH.h               | 2 ++
+ 4 files changed, 6 insertions(+)
+
+diff --git a/pkgs/apps/ferret/src/benchmark/ferret-pthreads.c b/pkgs/apps/ferret/src/benchmark/ferret-pthreads.c
+index 06b3d9c5..efc2af35 100644
+--- a/pkgs/apps/ferret/src/benchmark/ferret-pthreads.c
++++ b/pkgs/apps/ferret/src/benchmark/ferret-pthreads.c
+@@ -40,6 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ #define DEFAULT_DEPTH	25
+ #define MAXR	100
+ #define IMAGE_DIM	14
++#define HUGE DBL_MAX
+ 
+ const char *db_dir = NULL;
+ const char *table_name = NULL;
+diff --git a/pkgs/apps/ferret/src/src/lsh/LSH.h b/pkgs/apps/ferret/src/src/lsh/LSH.h
+index e7907719..eb656a9f 100644
+--- a/pkgs/apps/ferret/src/src/lsh/LSH.h
++++ b/pkgs/apps/ferret/src/src/lsh/LSH.h
+@@ -6,6 +6,8 @@
+ #include <cass_hash.h>
+ #include <cass_bitmap.h>
+ 
++#define HUGE DBL_MAX
++
+ typedef struct {
+ 	int a_step, b_step;
+ 	double a_min, a_max;
+diff --git a/pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c b/pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c
+index 0f700e80..db1b548e 100644
+--- a/pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c
++++ b/pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c
+@@ -54,6 +54,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ #define DEFAULT_DEPTH	25
+ #define MAXR	100
+ #define IMAGE_DIM	14
++#define HUGE DBL_MAX
+ 
+ const char *db_dir = NULL;
+ const char *table_name = NULL;
+diff --git a/pkgs/netapps/netferret/src/server/src/lsh/LSH.h b/pkgs/netapps/netferret/src/server/src/lsh/LSH.h
+index e7907719..eb656a9f 100644
+--- a/pkgs/netapps/netferret/src/server/src/lsh/LSH.h
++++ b/pkgs/netapps/netferret/src/server/src/lsh/LSH.h
+@@ -6,6 +6,8 @@
+ #include <cass_hash.h>
+ #include <cass_bitmap.h>
+ 
++#define HUGE DBL_MAX
++
+ typedef struct {
+ 	int a_step, b_step;
+ 	double a_min, a_max;
+-- 
+2.31.1
+

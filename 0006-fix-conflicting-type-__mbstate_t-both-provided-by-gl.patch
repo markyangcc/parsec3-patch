@@ -1,0 +1,27 @@
+From d5d51af21d254108e6b6b2cf5a7be6fd0f5d9736 Mon Sep 17 00:00:00 2001
+From: guangsheng1 <guangsheng1@staff.sina.com>
+Date: Fri, 3 Mar 2023 10:00:36 +0000
+Subject: [PATCH 6/7] fix: conflicting type __mbstate_t, both provided by glibc
+ and parsec lib
+
+simply rename __mbstate_t in parsec lib to fix confliction
+---
+ pkgs/libs/uptcpip/src/include/sys/bsd__types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pkgs/libs/uptcpip/src/include/sys/bsd__types.h b/pkgs/libs/uptcpip/src/include/sys/bsd__types.h
+index fa1b0f0f..5debf29d 100644
+--- a/pkgs/libs/uptcpip/src/include/sys/bsd__types.h
++++ b/pkgs/libs/uptcpip/src/include/sys/bsd__types.h
+@@ -102,7 +102,7 @@ typedef	__uint32_t	__fixpt_t;	/* fixed point number */
+ typedef union {
+ 	char		__mbstate8[128];
+ 	__int64_t	_mbstateL;	/* for alignment */
+-} __mbstate_t;
++} __mbstate_t_______;
+ #endif 
+ 
+ #endif /* !_BSD_SYS__TYPES_H_ */
+-- 
+2.31.1
+

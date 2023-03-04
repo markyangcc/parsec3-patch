@@ -1,0 +1,37 @@
+From b84adf23ac494f262f4171899eead547a30c1316 Mon Sep 17 00:00:00 2001
+From: guangsheng1 <guangsheng1@staff.sina.com>
+Date: Fri, 3 Mar 2023 08:27:36 +0000
+Subject: [PATCH] Build parsec with GNU C11/GNU C++11 std for better
+ portability
+
+This commit changes the build configuration of parsec to use GNU C11/GNU C++11 std instead of .
+Specifying  enables the GCC compiler to define __STRICT_ANSI__ macro, which causes non-ANSI
+function declarations to be removed from the standard headers.
+This configuration may limit the portability of parsec.
+
+By using GNU C11/GNU C++11 std, we ensure that parsec is built with a more portable configuration.
+This commit improves the maintainability and compatibility of parsec across different platforms.
+
+Ref: https://stackoverflow.com/a/26284172/19500844
+---
+ config/gcc.bldconf | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/config/gcc.bldconf b/config/gcc.bldconf
+index 144f6231..03e15892 100644
+--- a/config/gcc.bldconf
++++ b/config/gcc.bldconf
+@@ -71,8 +71,8 @@ export MAKE="${GNUTOOL_HOME}/bin/${BINARY_PREFIX}make"
+ PORTABILITY_FLAGS="-static-libgcc -Wl,--hash-style=both,--as-needed"
+ 
+ # Arguments to use
+-export CFLAGS=" -O3 -g -funroll-loops -fprefetch-loop-arrays ${PORTABILITY_FLAGS}"
+-export CXXFLAGS="-O3 -g -funroll-loops -fprefetch-loop-arrays -fpermissive -fno-exceptions ${PORTABILITY_FLAGS}"
++export CFLAGS=" -O3 -g -funroll-loops -fprefetch-loop-arrays -std=gnu11 ${PORTABILITY_FLAGS}"
++export CXXFLAGS="-O3 -g -funroll-loops -fprefetch-loop-arrays -fpermissive -fno-exceptions -std=gnu++11 ${PORTABILITY_FLAGS}"
+ export CPPFLAGS=""
+ export CXXCPPFLAGS=""
+ export LDFLAGS="-L${CC_HOME}/lib64 -L${CC_HOME}/lib"
+-- 
+2.31.1
+

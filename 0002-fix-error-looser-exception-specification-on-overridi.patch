@@ -1,0 +1,137 @@
+From 6f438a239cbfeb1d4024aa568a281fb9b028916a Mon Sep 17 00:00:00 2001
+From: guangsheng1 <guangsheng1@staff.sina.com>
+Date: Fri, 3 Mar 2023 08:45:28 +0000
+Subject: [PATCH 2/7] fix: don't throw exceptions in destructors
+
+---
+ pkgs/apps/bodytrack/src/TrackingBenchmark/AsyncIO.h             | 2 +-
+ .../bodytrack/src/TrackingBenchmark/TrackingModelPthread.cpp    | 2 +-
+ .../apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.h | 2 +-
+ pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.cpp     | 2 +-
+ pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.h       | 2 +-
+ pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.cpp    | 2 +-
+ pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.h      | 2 +-
+ .../bodytrack/src/TrackingBenchmark/threads/WorkerGroup.cpp     | 2 +-
+ pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.h | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/AsyncIO.h b/pkgs/apps/bodytrack/src/TrackingBenchmark/AsyncIO.h
+index 13ab3b16..7c8a2dc0 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/AsyncIO.h
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/AsyncIO.h
+@@ -57,7 +57,7 @@ public:
+ 	{	mImageBuffer.resize(0); 
+ 	};
+ 
+-	~AsyncImageLoader() {};
++	~AsyncImageLoader() throw(){};
+ 
+ 	//thread code
+ 	void Run();
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.cpp b/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.cpp
+index 92ce0412..6edaa0b0 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.cpp
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.cpp
+@@ -231,7 +231,7 @@ bool TrackingModelPthread::GetObservation(float timeval)
+ 	return true;
+ }
+ 
+-TrackingModelPthread::~TrackingModelPthread()
++TrackingModelPthread::~TrackingModelPthread() throw()
+ {
+ 	delete IOthread;
+ }
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.h b/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.h
+index 3367bd9c..7b1b568c 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.h
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/TrackingModelPthread.h
+@@ -38,7 +38,7 @@ class TrackingModelPthread : public TrackingModel, public threads::Threadable {
+ public:
+ 	//constructor
+ 	TrackingModelPthread(WorkPoolPthread &_workers);
+-	~TrackingModelPthread();
++	~TrackingModelPthread() throw();
+ 
+ 	//Generate an edge map from the original camera image
+ 	void CreateEdgeMap(FlexImage8u &src, FlexImage8u &dst);
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.cpp b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.cpp
+index 68aa9473..f8c14bff 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.cpp
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.cpp
+@@ -60,7 +60,7 @@ Mutex::Mutex() throw(MutexException) {
+ #endif //HAVE_LIBPTHREAD
+ }
+ 
+-Mutex::~Mutex() throw(MutexException) {
++Mutex::~Mutex() throw() {
+ #if defined(HAVE_LIBPTHREAD)
+   int rv;
+ 
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.h b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.h
+index 5a4e60e3..17768463 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.h
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/Mutex.h
+@@ -83,7 +83,7 @@ class Mutex: public LockType {
+ 
+   public:
+     Mutex() throw(MutexException);
+-    ~Mutex() throw(MutexException);
++    ~Mutex() throw();
+ 
+     //Enter a critical region
+     void Lock() throw(MutexException);
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.cpp b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.cpp
+index b6df8bc2..1ecda150 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.cpp
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.cpp
+@@ -52,7 +52,7 @@ RWLock::RWLock() throw(RWLockException) {
+ 
+ }
+ 
+-RWLock::~RWLock() throw(RWLockException) {
++RWLock::~RWLock() throw() {
+   int rv;
+ 
+   rv = pthread_rwlock_destroy(&l);
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.h b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.h
+index bfdfa6a1..31793517 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.h
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/RWLock.h
+@@ -67,7 +67,7 @@ class RWLockUnknownException: public RWLockException {
+ class RWLock: public RWLockType {
+   public:
+     RWLock() throw(RWLockException);
+-    ~RWLock() throw(RWLockException);
++    ~RWLock() throw();
+ 
+     //Enter a critical region for reading
+     void ReadLock() throw(RWLockException);
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.cpp b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.cpp
+index 33ed5c6f..113ad483 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.cpp
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.cpp
+@@ -40,7 +40,7 @@ WorkerGroup::WorkerGroup(int nThreads) : cmd(THREADS_IDLE), workAvailable(workDi
+ }
+ 
+ //destructor
+-WorkerGroup::~WorkerGroup() {
++WorkerGroup::~WorkerGroup() throw(){
+   delete workDoneBarrier;
+   delete poolReadyBarrier;
+ }
+diff --git a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.h b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.h
+index a5250b06..8f37f6c8 100644
+--- a/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.h
++++ b/pkgs/apps/bodytrack/src/TrackingBenchmark/threads/WorkerGroup.h
+@@ -85,7 +85,7 @@ class WorkerGroup: protected ThreadGroup, protected Runnable {
+     //constructor
+     WorkerGroup(int nThreads);
+     //destructor
+-    ~WorkerGroup();
++    ~WorkerGroup() throw();
+ 
+     //Add a new cmd -> object/function mapping to the pool
+     void RegisterCmd(int _cmd, Threadable &obj);
+-- 
+2.31.1
+
