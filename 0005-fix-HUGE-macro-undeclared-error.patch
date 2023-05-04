@@ -18,7 +18,7 @@ index 06b3d9c5..efc2af35 100644
  #define DEFAULT_DEPTH	25
  #define MAXR	100
  #define IMAGE_DIM	14
-+#define HUGE DBL_MAX
++#define HUGE HUGE_VAL
  
  const char *db_dir = NULL;
  const char *table_name = NULL;
@@ -30,7 +30,7 @@ index e7907719..eb656a9f 100644
  #include <cass_hash.h>
  #include <cass_bitmap.h>
  
-+#define HUGE DBL_MAX
++#define HUGE HUGE_VAL
 +
  typedef struct {
  	int a_step, b_step;
@@ -43,7 +43,7 @@ index 0f700e80..db1b548e 100644
  #define DEFAULT_DEPTH	25
  #define MAXR	100
  #define IMAGE_DIM	14
-+#define HUGE DBL_MAX
++#define HUGE HUGE_VAL
  
  const char *db_dir = NULL;
  const char *table_name = NULL;
@@ -55,7 +55,7 @@ index e7907719..eb656a9f 100644
  #include <cass_hash.h>
  #include <cass_bitmap.h>
  
-+#define HUGE DBL_MAX
++#define HUGE HUGE_VAL
 +
  typedef struct {
  	int a_step, b_step;
